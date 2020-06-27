@@ -36,7 +36,8 @@ class BaseRepository
                 $input[$key] = $arrayData;
             }
         }
-        return $Model->fill($input)->save();
+        $Model->fill($input)->save();
+        return $Model;
     }
 
     public function createNew($requestData, Model $model)
