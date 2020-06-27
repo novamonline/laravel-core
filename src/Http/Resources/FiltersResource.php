@@ -12,16 +12,24 @@ trait FiltersResource
 {
     public function filterRequest($request, $resource)
     {
-        // handle select parameter
-        $resource = $this->getSelected($request, $resource);
+        if ($request->filled('select')) {
+            $resource = $this->getSelected($request->select, $resource);
+        }
+        if ($filtered = $request->except('select', 'with')) {
+            $resource = $this->getFiltered($filtered, $resource);
+        }
         return $resource;
     }
-    public function getSelected($request, $resource)
+
+    public function getSelected($selectData, $resource)
     {
-        if ($request->filled('select')) {
-            $selected = preg_split("#\s*,\s*#msi", $request->select);
-            return Arr::only($resource, $selected);
-        }
+        $selected = preg_split("#\s*,\s*#msi", $selectData);
+        return Arr::only($resource, $selected);
+    }
+
+    public function getFiltered($filterOptions, $resource)
+    {
+        dump($filterOptions);
         return $resource;
     }
 }
