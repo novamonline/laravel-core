@@ -1,0 +1,11 @@
+<?php 
+
+namespace $TRAIT_SPACE$;
+
+/**
+ * $TRAIT_NAME$
+ */
+trait $TRAIT_NAME$
+{
+  
+}
