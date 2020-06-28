@@ -10,25 +10,48 @@ use Illuminate\Support\Str;
 */
 trait FiltersResource
 {
+    /**
+     * @param $request
+     * @param $resource
+     * @return array
+     */
     public function filterRequest($request, $resource)
     {
         if ($request->filled('select')) {
-            $resource = $this->getSelected($request->select, $resource);
+            $resource = $this->getSelected($request, $resource);
         }
-        if ($filtered = $request->except('select', 'with', 'relations')) {
-            $resource = $this->getFiltered($filtered, $resource);
+        if (count($request->except('select'))) {
+            $resource = $this->getSearched($request, $resource);
         }
         return $resource;
     }
 
-    public function getSelected($selectData, $resource)
+    /**
+     * @param $request
+     * @param $resource
+     * @return array
+     */
+    public function getSelected($request, $resource)
     {
-        $selected = preg_split("#\s*,\s*#msi", $selectData);
+        $selected = preg_split("#\s*,\s*#msi", $request->select);
         return Arr::only($resource, $selected);
     }
 
-    public function getFiltered($filterOptions, $resource)
+    /**
+     * @param $request
+     * @param $resource
+     * @return array
+     */
+    public function getSearched($request, $resource)
     {
-        return $resource;
+        $searched = Arr::only($request->all(), array_keys($resource));
+
+        if(!count($searched)){
+            return $resource;
+        }
+
+        return Arr::where($resource, function($value, $key) use($request) {
+            return $request->$key == $value;
+        });
     }
 }
