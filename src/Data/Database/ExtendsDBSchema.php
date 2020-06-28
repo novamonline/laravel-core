@@ -209,4 +209,28 @@ trait ExtendsDBSchema
 
         return $table;
     }
+
+    /**
+     * @param Blueprint $table
+     * @param string[] $fields
+     * @return Blueprint
+     */
+    public function details(Blueprint $table, $fields = ['name', 'description'])
+    {
+        $precision = null;
+
+        foreach ($fields  as $key => $field){
+            if(is_string($key)){
+                $field = $key;
+                $precision = $field;
+            }
+            if(Str::has($field, 'name')){
+                $table->string($field, $precision)->nullable();
+                //
+            } elseif(Str::has($field, 'desc')){
+                $table->text($field, $precision)->nullable();
+            }
+        }
+        return $table;
+    }
 }
