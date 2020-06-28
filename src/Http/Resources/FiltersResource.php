@@ -15,7 +15,7 @@ trait FiltersResource
         if ($request->filled('select')) {
             $resource = $this->getSelected($request->select, $resource);
         }
-        if ($filtered = $request->except('select', 'with')) {
+        if ($filtered = $request->except('select', 'with', 'relations')) {
             $resource = $this->getFiltered($filtered, $resource);
         }
         return $resource;
@@ -29,7 +29,6 @@ trait FiltersResource
 
     public function getFiltered($filterOptions, $resource)
     {
-        dump($filterOptions);
         return $resource;
     }
 }
