@@ -224,10 +224,10 @@ trait ExtendsDBSchema
                 $field = $key;
                 $precision = $field;
             }
-            if(Str::has($field, 'name')){
+            if(Str::contains($field, 'name')){
                 $table->string($field, $precision)->nullable();
                 //
-            } elseif(Str::has($field, 'desc')){
+            } elseif(Str::contains($field, 'desc')){
                 $table->text($field, $precision)->nullable();
             }
         }
