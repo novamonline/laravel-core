@@ -16,7 +16,7 @@ trait ExtendsResource
     protected function getWithRelation($request, $resource)
     {
         foreach(explode(",", $request->with) as $with){
-            $resource[$with] = $this->$with;
+            $resource[$with] = $this->{Str::camel($with)};
         }
         return $resource;
     }
@@ -34,7 +34,7 @@ trait ExtendsResource
                 continue;
             }
             $with = (string)Str::of($k)->before('_id')->camel()->ucfirst();
-            $resource[$with] = $this->$with;
+            $resource[$with] = $this->{Str::camel($with)};
         }
         return $resource;
     }
