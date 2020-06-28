@@ -54,6 +54,7 @@ class RunInstallCommand extends Command
         $this->line('======================================================');
 
         $this->call('optimize');
+        $this->call('cache:clear');
 
         if ($options['app'] || $options['all']) {
             $this->install_app($options);
