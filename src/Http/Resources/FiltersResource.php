@@ -33,7 +33,7 @@ trait FiltersResource
      */
     public function getSelected($request, $resource)
     {
-        $selected = preg_split("#\s*,\s*#msi", $request->select);
+        $selected = preg_split("#\s*[,|]\s*#msi", $request->select);
         return Arr::only($resource, $selected);
     }
 
@@ -46,12 +46,14 @@ trait FiltersResource
     {
         $searched = Arr::only($request->all(), array_keys($resource));
 
-        if(!count($searched)){
-            return $resource;
-        }
+//        if(!count($searched)){
+//            return $resource;
+//        }
+//
+//        $resource = Arr::where($resource, function($value, $key) use($searched) {
+//            return isset($searched[$key]) && $searched[$key] === $value;
+//        });
 
-        return Arr::where($resource, function($value, $key) use($request) {
-            return $request->$key == $value;
-        });
+        return array_filter($resource);
     }
 }
