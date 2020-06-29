@@ -2,7 +2,6 @@
 
 namespace Core\Data\Relations;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
@@ -20,6 +19,8 @@ trait AddsParentChildRelationships
     protected $depth = 10;
 
     /**
+     * The key used to determine the parent-child relationship
+     *
      * @return string
      */
     public function getRelationKey()
@@ -41,11 +42,22 @@ trait AddsParentChildRelationships
     /**
      * Fetches the parent of this Model
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Relations\HasOne;
      */
     public function Parent()
     {
+        //dd($this->primaryKey, $this->getRelationKey());
         return $this->hasOne(__CLASS__, $this->primaryKey, $this->getRelationKey());
+    }
+
+    /**
+     * Fetches the immediate children of this class
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function Children()
+    {
+        return $this->hasMany(__CLASS__, $this->getRelationKey(), $this->primaryKey);
     }
 
     /**
@@ -60,7 +72,6 @@ trait AddsParentChildRelationships
         $Parent = $this->parent;
 
         $depth = 0;
-
         while($Parent && $depth < $this->depth){
             $Ancestors->push($Parent);
             $Parent = $Parent->parent;
@@ -68,16 +79,6 @@ trait AddsParentChildRelationships
         }
 
         return $Ancestors;
-    }
-
-    /**
-     * Fetches the immediate children of this class
-     *
-     * @return void
-     */
-    public function Children()
-    {
-        return $this->hasMany(__CLASS__, $this->getRelationKey(), $this->primaryKey);
     }
 
     /**
