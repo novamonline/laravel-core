@@ -2,6 +2,7 @@
 
 namespace Core\Data\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
@@ -9,7 +10,7 @@ use Illuminate\Support\Collection;
  * Adds parent-child relationship to the model
  */
 trait AddsParentChildRelationships
-{   
+{
 
     /**
      * Determines how deep nested relationships should go. Deafult is 10
@@ -17,6 +18,26 @@ trait AddsParentChildRelationships
      * @var integer
      */
     protected $depth = 10;
+
+    /**
+     * @return string
+     */
+    public function getRelationKey()
+    {
+        return Str::singular($this->getTable()) . '_id';
+    }
+
+    /**
+     * Scope a query to only include top-most.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTopmost($query)
+    {
+        return $query->whereNull( $this->getRelationKey() );
+    }
+
     /**
      * Fetches the parent of this Model
      *
@@ -40,7 +61,7 @@ trait AddsParentChildRelationships
         $Ancestors = new Collection();
 
         $Parent = $this->parent;
-        
+
         $depth = 0;
 
         while($Parent && $depth < $this->depth){
@@ -52,7 +73,7 @@ trait AddsParentChildRelationships
 
         return $Ancestors;
     }
-    
+
     /**
      * Fetches the immediate children of this class
      *
@@ -63,7 +84,7 @@ trait AddsParentChildRelationships
         $builder =  $this->hasMany(__CLASS__);
         return $builder;
     }
-    
+
     /**
      * All desendants of this __CLASS__ model
      *
