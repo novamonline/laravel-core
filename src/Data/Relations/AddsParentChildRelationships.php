@@ -24,7 +24,7 @@ trait AddsParentChildRelationships
      */
     public function getRelationKey()
     {
-        return Str::singular($this->getTable()) . '_id';
+        return ( (string)Str::of($this->getTable())->singular() ). '_id';
     }
 
     /**
@@ -45,10 +45,7 @@ trait AddsParentChildRelationships
      */
     public function Parent()
     {
-        $FK = Str::singular($this->getTable()).'_id';
-        $builder = $this->hasOne(__CLASS__, $FK);
-        // dd($builder->toSql(), $builder->getBindings());
-        return $builder;
+        return $this->hasOne(__CLASS__, $this->primaryKey, $this->getRelationKey());
     }
 
     /**
@@ -67,7 +64,6 @@ trait AddsParentChildRelationships
         while($Parent && $depth < $this->depth){
             $Ancestors->push($Parent);
             $Parent = $Parent->parent;
-
             $depth++;
         }
 
@@ -81,14 +77,13 @@ trait AddsParentChildRelationships
      */
     public function Children()
     {
-        $builder =  $this->hasMany(__CLASS__);
-        return $builder;
+        return $this->hasMany(__CLASS__, $this->getRelationKey(), $this->primaryKey);
     }
 
     /**
      * All desendants of this __CLASS__ model
      *
-     * @return HasOneRelationship
+     * @return Collection
      */
     public function getDescendantsAttribute()
     {
