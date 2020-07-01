@@ -28,6 +28,11 @@ trait AddsParentChildRelationships
         return ( (string)Str::of($this->getTable())->singular() ). '_id';
     }
 
+    public function getRelationKeyAttribute()
+    {
+        return ( (string)Str::of($this->getTable())->singular() ). '_id';
+    }
+
     /**
      * Scope a query to only include top-most.
      *
@@ -36,7 +41,7 @@ trait AddsParentChildRelationships
      */
     public function scopeTopmost($query)
     {
-        return $query->whereNull( $this->getRelationKey() );
+        return $query->whereNull( $this->relationKey );
     }
 
     /**
@@ -47,7 +52,7 @@ trait AddsParentChildRelationships
     public function Parent()
     {
         //dd($this->primaryKey, $this->getRelationKey());
-        return $this->hasOne(__CLASS__, $this->primaryKey, $this->getRelationKey());
+        return $this->belongsTo(__CLASS__, $this->getRelationKey());
     }
 
     /**
@@ -57,7 +62,7 @@ trait AddsParentChildRelationships
      */
     public function Children()
     {
-        return $this->hasMany(__CLASS__, $this->getRelationKey(), $this->primaryKey);
+        return $this->hasMany(__CLASS__);
     }
 
     /**
