@@ -16,13 +16,17 @@ trait ExtendsDBSchema
 {
 
     /**
-    * @var string
-    */
+     * Business users
+     *
+     * @var string
+     */
     public $user_table = 'bu_users';
 
     /**
-    * @var string
-    */
+     * Business user primary key
+     *
+     * @var string
+     */
     public $user_id = 'bu_user_id';
 
     /**
