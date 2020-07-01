@@ -185,12 +185,12 @@ trait ExtendsDBSchema
     * Modifies timestamps fields (create and update)
     *
     * @param Blueprint $table
-    * @param boolean $softDelete
+    * @param boolean $forceDelete
     * @param boolean $initUpdate
     *
     * @return Blueprint $table
     */
-    public function timestamps(Blueprint $table, $softDelete = false, $initUpdate = false) : Blueprint
+    public function timestamps(Blueprint $table, $forceDelete = false, $initUpdate = false) : Blueprint
     {
         $CURRENT_TIMESTAMP  = DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP');
         $NULLABLE_TIMESTAMP = DB::raw('NULL on update CURRENT_TIMESTAMP');
@@ -203,7 +203,7 @@ trait ExtendsDBSchema
             $updateDateTime->default($NULLABLE_TIMESTAMP);
         }
 
-        if ($softDelete) {
+        if (!$forceDelete) {
             $table->dateTime('deleted_at')->nullable();
         }
 
