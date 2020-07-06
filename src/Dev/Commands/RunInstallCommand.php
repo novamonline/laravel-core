@@ -244,12 +244,12 @@ class RunInstallCommand extends Command
             $privileges = "ALL PRIVILEGES";
             if(Str::startsWith($username, 'dbr_')){
                 $privileges = "SELECT";
+            } elseif(Str::startsWith($username, 'dbw_')){
+                $privileges = "SELECT,INSERT,UPDATE,DELETE";
+            } else{
                 $database = "*";
             }
-            if(Str::startsWith($username, 'dbw_')){
-                $privileges = "SELECT,INSERT,UPDATE,DELETE";
-            }
-            $this->line("... adding user: username='$username', password='$password'; grant='$privileges'");
+            $this->line("... adding user: username='$username', password='$password'; grant='$privileges' to $database");
             $CONNECTION->statement("CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
 
             $CONNECTION->statement("GRANT $privileges ON $database.* TO '$username'@'%';");
