@@ -210,11 +210,11 @@ class RunInstallCommand extends Command
 
     public function init_db($CONNECTION, $db)
     {
-        $host = $db['host'] ?? "127.0.0.1";
-        $port = $db['port'] ?? 3306;
+//        $host = $db['host'] ?? "127.0.0.1";
+//        $port = $db['port'] ?? 3306;
         $database = $db['database'] ?? null;
-        $username = $db['username'] ?? null;
-        $password = $db['password'] ?? "";
+//        $username = $db['username'] ?? null;
+//        $password = $db['password'] ?? "";
         $charset = $db['charset'] ?? 'utf8mb4';
         $collation = $db['collation'] ?? 'utf8mb4_general_ci';
         $driver = isset($db['driver']) && $db['driver'] == "mysql";
@@ -247,8 +247,8 @@ class RunInstallCommand extends Command
             } elseif(Str::startsWith($username, 'dbw_')){
                 $privileges = "SELECT,INSERT,UPDATE,DELETE";
             } else{
-            }
                 $database = "*";
+            }
             $this->line("... adding user: username='$username', password='$password'; grant='$privileges' to $database");
             $CONNECTION->statement("CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
 
