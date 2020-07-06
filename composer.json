@@ -8,8 +8,9 @@
             "email": "hilkiah.makemo@skywest.com"
         }
     ],
+    "license": "MIT",
     "require": {
-        "oomphinc/composer-installers-extender": "dev-master"
+        "oomphinc/composer-installers-extender": "^1.1"
     },
     "extra": {
         "laravel": {

@@ -244,6 +244,7 @@ class RunInstallCommand extends Command
             $privileges = "ALL PRIVILEGES";
             if(Str::startsWith($username, 'dbr_')){
                 $privileges = "SELECT";
+                $database = "*";
             }
             if(Str::startsWith($username, 'dbw_')){
                 $privileges = "SELECT,INSERT,UPDATE,DELETE";
