@@ -265,7 +265,9 @@ class RunInstallCommand extends Command
             if(Str::startswith(strtolower($continue),'n')) die();
         }
         extract($rootdb);
-        if($password) $password = "-p'$password'";
+        if(isset($password) && $password) {
+            $password = "-p'$password'";
+        }
 
         if(!file_exists($backup_path = storage_path("data/backups/bak-".date('Ymd')))){
             mkdir($backup_path, 0644, true);
