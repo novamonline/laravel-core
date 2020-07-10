@@ -167,10 +167,10 @@ class RunInstallCommand extends Command
             $env_data = preg_replace("#(DB_USERNAME\=)(.+?)\s+#si", "$1$username\n", $env_data);
         }
         if ($password) {
-            $env_data = preg_replace("#(DB_PASSWORD\=)(.+?)\s+#si", "$1$dataport\n", $env_data);
+            $env_data = preg_replace("#(DB_PASSWORD\=)(.+?)\s+#si", "$1$password\n", $env_data);
         }
         if ($dbport) {
-            $env_data = preg_replace("#(DB_PORT\=)(.+?)\s+#si", "$1$dataport\n", $env_data);
+            $env_data = preg_replace("#(DB_PORT\=)(.+?)\s+#si", "$1$dbport\n", $env_data);
         }
         file_put_contents($env_file, $env_data);
     }
@@ -196,7 +196,7 @@ class RunInstallCommand extends Command
             if(!$cdb){
                 continue;
             }
-            if (is_null($CreatedDB) || !\in_array($cdb, $CreatedDB)) {
+            if (is_null($CreatedDB) || !in_array($cdb, array_unique($CreatedDB))) {
                 if(Str::contains($n, 'legacy') || Str::contains($cdb, 'legacy')){
                     $this->line("... skipping $cdb");
                     continue;
@@ -217,7 +217,7 @@ class RunInstallCommand extends Command
 //        $password = $db['password'] ?? "";
         $charset = $db['charset'] ?? 'utf8mb4';
         $collation = $db['collation'] ?? 'utf8mb4_general_ci';
-        $driver = isset($db['driver']) && $db['driver'] == "mysql";
+        $driver = $db['driver'] ?? "mysql";
 
         if ($database && $driver) {
             $this->line("... backing up database '$database' if exists");
