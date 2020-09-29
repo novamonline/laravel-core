@@ -117,4 +117,26 @@ class BaseRepository
         }
         return $this->getResult();
     }
+
+    /**
+     * @param Request $request
+     * @param $Model
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function restore(Request $request, $Model)
+    {
+
+        try {
+            $Model->restore();
+            $this->setResult([
+                'status' => 201,
+                'message' => __('Successfully restored record(s)!'),
+                'data' => Arr::except($Model->toArray(), 'fields'),
+            ]);
+            //
+        } catch(\Exception $ex){
+            $this->setException($ex);
+        }
+        return $this->getResult();
+    }
 }
