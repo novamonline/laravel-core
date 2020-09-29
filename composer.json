@@ -1,0 +1,39 @@
+{
+    "name": "popcx/core",
+    "type": "laravel-library",
+    "description": "",
+    "authors": [
+        {
+            "name": "Hilkiah Makemo",
+            "email": "hilkiah.makemo@skywest.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "oomphinc/composer-installers-extender": "^1.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Core\\Boot\\Providers\\CoreServiceProvider"
+            ],
+            "aliases": {
+                "Core": "Core\\Mock\\Facades"
+            }
+        },
+        "installer-name": "core"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "src/"
+        },
+        "files": [
+            "./lib/helpers/load.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Core\\": "src/"
+        }
+    }
+}

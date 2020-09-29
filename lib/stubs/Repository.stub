@@ -1,0 +1,11 @@
+<?php 
+
+namespace $REPO_SPACE$;
+
+/**
+ * $REPO_NAME$
+ */
+class $REPO_NAME$
+{
+  
+}
