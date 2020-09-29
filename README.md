@@ -6,23 +6,23 @@ This code can be used by any application that wishes to take advantage of these 
 ## Installation
 * First, specify where you wish this package to be installed, e.g. root of the application, if you don't want it in the root folder
 * Then, add the Core namespace to your composer.json file. NOTE: If you let it install in the vendor folder you don't need to do this:
-``
+```
+...
+"autoload": {
     ...
-    "autoload": {
+    "psr-4": {
         ...
-        "psr-4": {
-            ...
-            "Core\\": "core/src",
-            ...
-        }
-    },
-    ...
-``
+        "Core\\": "core/src",
+        ...
+    }
+},
+...
+```
 
 * Finally, just require it using composer
-``
-    composer requre popcx/laravel-core
-``
+```shell script
+> composer requre popcx/core
+```
 
 That's it!
 
