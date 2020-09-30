@@ -2,10 +2,13 @@
 
 
 namespace Core\Boot\Providers;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
-class MacroServiceProvider
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\ServiceProvider;
+
+class MacroServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,6 +17,7 @@ class MacroServiceProvider
      */
     public function register()
     {
+        //
     }
 
     /**
@@ -23,20 +27,23 @@ class MacroServiceProvider
      */
     public function boot()
     {
-        Collection::macro('paginate', function($perPage, $total = null, $page = null, $pageName = 'page') {
-            $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+        //
+        if (!Collection::hasMacro('paginate')) {
 
-            return new LengthAwarePaginator(
-                $this->forPage($page, $perPage),
-                $total ?: $this->count(),
-                $perPage,
-                $page,
-                [
-                    'path' => LengthAwarePaginator::resolveCurrentPath(),
-                    'pageName' => $pageName,
-                ]
-            );
-        });
+            Collection::macro('paginate', function($perPage, $total = null, $page = null, $pageName = 'page') {
+                $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+                return new LengthAwarePaginator(
+                    $this->forPage($page, $perPage),
+                    $total ?: $this->count(),
+                    $perPage,
+                    $page,
+                    [
+                        'path' => LengthAwarePaginator::resolveCurrentPath(),
+                        'pageName' => $pageName,
+                    ]
+                );
+            });
+        }
     }
-
 }
