@@ -32,9 +32,6 @@
             "./lib/helpers/load.php"
         ]
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Core\\": "src/"
-        }
-    }
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
