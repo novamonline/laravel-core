@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Core\Boot;
+namespace Core\Boot\Services;
 
 
 class Pagination
