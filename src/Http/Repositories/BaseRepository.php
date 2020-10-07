@@ -123,7 +123,7 @@ class BaseRepository
      * @param $Model
      * @return \Illuminate\Http\JsonResponse
      */
-    public function restore(Request $request, $Model)
+    public function restore(Request $request, Model $Model)
     {
 
         try {
