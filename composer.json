@@ -16,7 +16,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Core\\Boot\\Providers\\CoreServiceProvider"
+                "Core\\Boot\\Providers\\CoreServiceProvider",
+                "Core\\Boot\\Providers\\MacroServiceProvider"
             ],
             "aliases": {
                 "Core": "Core\\Mock\\Facades"
