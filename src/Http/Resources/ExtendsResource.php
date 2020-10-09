@@ -15,9 +15,14 @@ trait ExtendsResource
      */
     protected function getWithRelation($request, $resource)
     {
-        foreach(explode(",", $request->with) as $with){
-            $resource[$with] = $this->{Str::camel($with)};
+        if(!is_array($with = $request->with)){
+            $with = explode(",", $with);
         }
+
+        foreach($with as $w){
+            $resource[$w] = $this->{Str::camel($w)};
+        }
+
         return $resource;
     }
 
