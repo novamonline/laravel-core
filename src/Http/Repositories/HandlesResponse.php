@@ -27,6 +27,17 @@ trait HandlesResponse
          return;
       }
    }
+
+    public function setEmptyResult($request)
+    {
+        $this->setResult([
+            'status' => 400,
+            'message' => __('Empty request sent to the server!'),
+            'data' => $request->all(),
+        ]);
+    }
+
+
    
    public function setException(\Exception $exception)
    {
