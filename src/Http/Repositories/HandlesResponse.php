@@ -4,7 +4,9 @@
 namespace Core\Http\Repositories;
 
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
+use PDOException;
 
 trait HandlesResponse
 {
@@ -44,9 +46,10 @@ trait HandlesResponse
       $status = $exception->getCode();
       $message = $exception->getMessage();
       $trace =  $exception->getTrace();
+      $class = get_class($exception);
       
-      if(Str::startsWith($status,'HY00')){
-         $message = (string) Str::of($message)->after(':')->before('(')->trim();
+      if($class instanceof QueryException || $class instanceof PDOException){
+          $message = (string) Str::of($message)->after(':')->before('(')->trim();
       }
       
       if(config('app.env') == 'production'){
