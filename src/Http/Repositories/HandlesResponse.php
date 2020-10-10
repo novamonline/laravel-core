@@ -46,9 +46,9 @@ trait HandlesResponse
       $status = $exception->getCode();
       $message = $exception->getMessage();
       $trace =  $exception->getTrace();
-      $class = get_class($exception);
-      
-      if($class instanceof QueryException || $class instanceof PDOException){
+
+      if($exception instanceof QueryException || $exception instanceof PDOException){
+          http_response_code($status = 500);
           $message = (string) Str::of($message)->after(':')->before('(')->trim();
       }
       
