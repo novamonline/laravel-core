@@ -265,7 +265,7 @@ class RunInstallCommand extends Command
         $driver = isset($db['driver']) && $db['driver'] == "mysql";
 
         if ($database && $username && $password && $driver) {
-            $privileges = "SELECT,INSERT,UPDATE,DELETE,CREATE,ALTER,DROP,INDEX,EXECUTE,REFERENCE";
+            $privileges = "SELECT,INSERT,UPDATE,DELETE,CREATE,ALTER,DROP,INDEX,EXECUTE,REFERENCES";
             if(Str::startsWith($username, 'dbr_')){
                 $privileges = "SELECT";
             } elseif(Str::startsWith($username, 'dbw_')){
