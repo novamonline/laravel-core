@@ -114,7 +114,7 @@ class RunInstallCommand extends Command
             }
         }
         $action = isset($options['upgrade'])? 'update': 'install';
-        shell_exec("composer $action");
+        shell_exec("composer $action -n");
 
         if ($options['reset'] || $options['all']) {
             $this->line('-------------------------------------');
