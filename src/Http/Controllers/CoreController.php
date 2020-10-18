@@ -55,7 +55,7 @@ class CoreController extends Controller
 
     public function getFiltered($model, $request)
     {
-        $exclude = ['with', 'select', 'page', 'archived'];
+        $exclude = ['with', 'select', 'page', 'archived', 'limit'];
         $filter = $request->except($exclude);
 
         $method = Str::lower($request->method());
@@ -66,16 +66,24 @@ class CoreController extends Controller
 
         foreach ($filter as $key => $value){
             if(Str::contains($value, $str = ['*', '%'])){
+
                 $value = str_replace($str, "%", $value);
                 $model = $model->where($key, 'like', $value);
+
             } elseif(Str::startsWith($value, ['not:'])){
+
                 $NOT = Str::after($value, 'not:');
                 $model = $model->whereNot($key, $NOT);
+
             } elseif(Str::startsWith($value, ['in:'])){
+
                 $IN = Str::after($value, 'in:');
                 $model = $model->whereIn($key, explode(',', $IN));
+
             } else {
+
                 $model = $model->where($key, $value);
+
             }
         }
 
