@@ -41,16 +41,6 @@ if(!function_exists('import')){
             break;
       }
 
-      return $import ?? [];
+      return $import;
    }
-}
-
-
-if(!function_exists('business')){
-    function business()
-    {
-//        dump(request()->header('x-popcx-token'));
-        return Business::find(6);
-
-    }
 }
