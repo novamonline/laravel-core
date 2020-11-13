@@ -2,6 +2,7 @@
 
 namespace Core\Http\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -132,6 +133,58 @@ class BaseRepository
                 'status' => 201,
                 'message' => __('Successfully restored record(s)!'),
                 'data' => Arr::except($Model->toArray(), 'fields'),
+            ]);
+            //
+        } catch(\Exception $ex){
+            $this->setException($ex);
+        }
+        return $this->getResult();
+    }
+
+    public function bulkUpdate(Request $request, Collection $Records)
+    {
+        try {
+            $this->validate($request, [
+                'id' => 'required'
+            ]);
+
+            $except = ['id', 'archived'];
+
+            if($request->has('archived')){
+                $deleted_at = $request->boolean('archived')? now(): null;
+                $request->merge( compact('deleted_at') );
+            }
+            foreach ($Records as $record){
+                $record->fill( $request->except($except) )->save();
+            }
+
+            $this->setResult([
+                'status' => 201,
+                'message' => __('Successfully performed bulk update on record'),
+                'data' => Arr::except($Records->toArray(), ['fields']),
+            ]);
+            //
+        } catch(\Exception $ex){
+            $this->setException($ex);
+        }
+
+        return $this->getResult();
+    }
+
+
+    public function bulkDelete(Request $request, Model $model)
+    {
+
+        try {
+            $this->validate($request, [
+                'id' => 'required'
+            ]);
+
+            $model->delete( (array)$request->id );
+
+            $this->setResult([
+                'message' =>  __('Successfully deleted record(s)'),
+                'data' => $model->toArray(),
             ]);
             //
         } catch(\Exception $ex){
