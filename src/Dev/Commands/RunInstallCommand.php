@@ -397,8 +397,11 @@ class RunInstallCommand extends Command
         $this->line('---------------------------------------');
         $this->line('  Initializing local server');
         $this->line('---------------------------------------');
-        $this->line("Setting up port ".$port = mt_rand(1111, 9999));
+
+        $port = $port = mt_rand(1111, 9999);
         $host = '127.0.0.1';
+
+        $this->line("Setting up port ".$port);
         shell_exec("start \"\" http://$host:$port");
         $this->call("serve", ['--host'=>$host, '--port'=>$port]);
         $this->line('');
