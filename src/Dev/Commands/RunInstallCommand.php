@@ -63,9 +63,9 @@ class RunInstallCommand extends Command
 
         if ($options['app'] || $options['all']) {
             $this->install_app($options);
-        } else {
-            $this->call('key:generate');
-            shell_exec('composer dump-autoload');
+//        } else {
+//            $this->call('key:generate');
+//            shell_exec('composer dump-autoload');
         }
 
         if ($options['db'] || $options['all']) {
@@ -76,8 +76,8 @@ class RunInstallCommand extends Command
             $this->migrate_db($options);
         }
 
-        $this->call('optimize');
-        $this->call('cache:clear');
+//        $this->call('optimize');
+//        $this->call('cache:clear');
 
         if ($options['doc'] || $options['all']) {
             $this->call("apidoc:generate");
