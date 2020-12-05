@@ -6,6 +6,7 @@ namespace Core\Http\Repositories;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use function Webmozart\Assert\Tests\StaticAnalysis\methodExists;
 
 trait AssociatesRelations
 {
@@ -25,51 +26,48 @@ trait AssociatesRelations
         return $this->result;
     }
 
+    public function action($action, $Model, $data, $message)
+    {
+        $invalid = __("Invalid action $action on the model");
+        abort_if(!method_exists($Model, $action), 500, $invalid);
+
+        return $this->associateRelation( $Model->$action($data), $message );
+    }
+
     public function attach(BelongsToMany $Model, $data)
     {
-        return $this->associateRelation(
-            $Model->attach($data),
-            "Successfully attached new records"
-        );
+        $message = "Successfully attached new records";
+        return $this->action('attach', $Model, $data, $message);
     }
 
     public function newSync(BelongsToMany $Model, $data)
-    {;
-        return $this->associateRelation(
-            $Model->sync($data),
-            "Successfully synced records"
-        );
+    {
+        $message = "Successfully synced records";
+        return $this->action('sync', $Model, $data, $message);
     }
 
     public function updateSync(BelongsToMany $Model, $data)
     {
-        return $this->associateRelation(
-            $Model->syncWithoutDetaching($data),
-            "Successfully updated synced new records"
-        );
+        $message = "Successfully updated synced new records";
+        return $this->action('syncWithoutDetaching', $Model, $data, $message);
+
     }
 
     public function detach(BelongsToMany $Model, $data)
     {
-        return $this->associateRelation(
-            $Model->detach($data),
-            "Successfully detached new records"
-        );
+        $message = "Successfully updated synced new records";
+        return $this->action('detach', $Model, $data, $message);
     }
 
     public function associate(BelongsTo $Model, $data)
     {
-        return $this->associateRelation(
-            $Model->associate($data),
-            "Successfully associated new records"
-        );
+        $message = "Successfully associated new records";
+        return $this->action('associate', $Model, $data, $message);
     }
 
     public function createMany(HasMany $Model, $data = [])
     {
-        return $this->associateRelation(
-            $Model->createMany($data),
-            "Successfully created new records"
-        );
+        $message = "Successfully created new records";
+        return $this->action('createMany', $Model, $data, $message);
     }
 }
