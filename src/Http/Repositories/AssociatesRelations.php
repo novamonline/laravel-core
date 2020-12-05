@@ -43,13 +43,13 @@ trait AssociatesRelations
     public function newSync(BelongsToMany $Model, $data)
     {
         $message = "Successfully synced records";
-        return $this->action('sync', $Model, $data, $message);
+        return $this->action('syncWithoutDetaching', $Model, $data, $message);
     }
 
     public function updateSync(BelongsToMany $Model, $data)
     {
         $message = "Successfully updated synced new records";
-        return $this->action('syncWithoutDetaching', $Model, $data, $message);
+        return $this->action('sync', $Model, $data, $message);
 
     }
 
