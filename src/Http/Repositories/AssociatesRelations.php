@@ -55,7 +55,7 @@ trait AssociatesRelations
 
     public function detach(BelongsToMany $Model, $data)
     {
-        $message = "Successfully updated synced new records";
+        $message = "Successfully removed associated records";
         return $this->action('detach', $Model, $data, $message);
     }
 
