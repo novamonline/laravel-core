@@ -37,6 +37,7 @@ trait HandlesResponse
             'message' => __('Empty request sent to the server!'),
             'data' => $request->all(),
         ]);
+        return $this;
     }
 
 
@@ -57,6 +58,7 @@ trait HandlesResponse
       }
       
       $this->setResult(compact('status', 'message', 'trace'));
+      return $this;
    }
    
    public function getResult($key =  null)

@@ -26,6 +26,11 @@ trait AssociatesRelations
         return $this->result;
     }
 
+    public function sync()
+    {
+        return $this;
+    }
+
     public function action($action, $Model, $data, $message)
     {
         $invalid = __("Invalid action $action on the model");
