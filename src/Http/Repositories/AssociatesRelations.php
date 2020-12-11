@@ -64,7 +64,7 @@ trait AssociatesRelations
         return $this->action('detach', $Model, $data, $message);
     }
 
-    public function associate(Relation $Model, $data)
+    public function associate($Model, $data)
     {
         $message = "Successfully associated new records";
         $Saved = $Model->associate($data)->save();
