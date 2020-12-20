@@ -329,7 +329,8 @@ class RunInstallCommand extends Command
             if(Str::startswith(strtolower($emptyBak),'n')) die();
         }
         $InsertInto = "INSERT INTO `$database`.`";
-        file_put_contents($backup, str_replace('INSERT INTO `', $InsertInto, $rawSQL));
+        $SQL = str_replace('REPLACE INTO `', $InsertInto, $rawSQL);
+        file_put_contents($backup, $SQL);
         if(Str::startswith(strtolower($continue),'n')) die();
 
         $this->line("... backup complete!'");
