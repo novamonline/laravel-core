@@ -141,9 +141,10 @@ class RunInstallCommand extends Command
         return  DB::connection($conn ?: 'root');
     }
 
-    public function disconnect_db($conn = 'root')
+    public function disconnect_db($CONNECTION)
     {
         // DB::disconnect($conn);
+//        $CONNECTION = null;
     }
 
     public function install_db($options)
@@ -165,7 +166,7 @@ class RunInstallCommand extends Command
 
             if ($CONNECTION) {
                 $this->create_databases($CONNECTION);
-                $this->disconnect_db('root');
+                $this->disconnect_db($CONNECTION);
             } else {
                 $this->line('Database connection failed: '.mysqli_connect_error());
             }
@@ -257,8 +258,8 @@ class RunInstallCommand extends Command
             $this->backup_db($db);
 
             $this->line("... adding database: db='$database'; charset='$charset'; collation='$collation'");
-            $CONNECTION->statement("DROP DATABASE IF EXISTS $database;");
-            $CONNECTION->statement("CREATE DATABASE $database CHARACTER SET $charset COLLATE $collation;");
+            $CONNECTION->unprepared("DROP DATABASE IF EXISTS $database;");
+            $CONNECTION->unprepared("CREATE DATABASE $database CHARACTER SET $charset COLLATE $collation;");
         }
     }
 
@@ -280,10 +281,10 @@ class RunInstallCommand extends Command
                 $database = "*";
             }
             $this->line("... adding user: username='$username', password='$password'; grant='$privileges' to $database;");
-            $CONNECTION->statement("CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
+            $CONNECTION->unprepared("CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
 
-            $CONNECTION->statement("GRANT $privileges ON $database.* TO '$username'@'$host';");
-            $CONNECTION->statement('FLUSH PRIVILEGES;');
+            $CONNECTION->unprepared("GRANT $privileges ON $database.* TO '$username'@'$host';");
+            $CONNECTION->unprepared('FLUSH PRIVILEGES;');
         }
     }
 
@@ -308,7 +309,7 @@ class RunInstallCommand extends Command
         $database = $db['database'];
 
         if(isset($host) && isset($username) && isset($port) && isset($username)){
-            $flags =" --skip-triggers --compact --no-create-info --column-statistics=0";
+            $flags =" --compact --no-create-info --column-statistics=0";
             $mysqldump = "mysqldump -h $host -u $username -P $port $password $flags $database > $backup 2>&1";
             shell_exec( trim($mysqldump) );
         }
@@ -323,10 +324,12 @@ class RunInstallCommand extends Command
         $this->line("Backup created in $clean_backup_path!");
         $continue = $this->ask("Confirm that the backup is valid! Continue? (Y/N)", 'Y');
 
-        if(empty(trim(file_get_contents($backup)))){
+        if(empty($rawSQL = trim(file_get_contents($backup)))){
             $emptyBak = $this->ask('Backup file created but it is empty, continue? (Y/N)');
             if(Str::startswith(strtolower($emptyBak),'n')) die();
         }
+        $InsertInto = "INSERT INTO `$database`.`";
+        file_put_contents($backup, str_replace('INSERT INTO `', $InsertInto, $rawSQL));
         if(Str::startswith(strtolower($continue),'n')) die();
 
         $this->line("... backup complete!'");
@@ -424,7 +427,7 @@ class RunInstallCommand extends Command
 
     public function restoreDatabase($sqlFile)
     {
-        $CONNECTION = $this->connect_db('root');
+        $CONNECTION = $this->connect_db();
 
         $this->line("... restoring database data from latest backup: ".basename($sqlFile));
         $rawSQL =  file_get_contents($sqlFile);
