@@ -2,10 +2,14 @@
 
 namespace Core\Dev\Commands;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-
+//
+// TODO: Break this command into smaller commands callable from here!
+//
 class RunInstallCommand extends Command
 {
     /**
@@ -21,6 +25,8 @@ class RunInstallCommand extends Command
                             {--N|newdb : Create new local database}
                             {--m|migrate : Run migrations after database creation}
                             {--s|seed : Run seeds after migrations}
+                            {--e|export : Export data from database into backup}
+                            {--i|import : Import data into database from backup}
                             {--u|upgrade : Upgrade composer packages (not included in --all)}
                             {--a|app : Run installation of the application}
                             {--A|all : Run this command with ALL the options!}
@@ -203,8 +209,8 @@ class RunInstallCommand extends Command
         $this->line("Creating database(s)...");
         $CreatedDB = [];
         foreach ($DATABASES as $n => $db) {
-            $cdb = $db['database'] ?? null;
-            if(!$cdb){
+
+            if( !($cdb = $db['database'] ?? null) ){
                 continue;
             }
             if (is_null($CreatedDB) || !in_array($cdb, array_unique($CreatedDB))) {
@@ -302,18 +308,25 @@ class RunInstallCommand extends Command
         $database = $db['database'];
 
         if(isset($host) && isset($username) && isset($port) && isset($username)){
-            shell_exec("mysqldump -h $host -u $username -P $port $password $database > $backup 2>&1");
+            $flags =" --skip-triggers --compact --no-create-info --column-statistics=0";
+            $mysqldump = "mysqldump -h $host -u $username -P $port $password $flags $database > $backup 2>&1";
+            shell_exec( trim($mysqldump) );
         }
 
         if(!($backup = realpath($backup))){
             $this->line('Backup creation was NOT successful!');
-            $continue = $this->ask('We will still drop the database. Continue? Y or N', 'Y');
+            $continue = $this->ask('We will still drop the database. Continue? (Y/N)', 'Y');
             if(Str::of($continue)->lower()->startswith('n')) die();
         }
         $clean_backup_path = Str::after($backup, base_path());
         $this->line("");
         $this->line("Backup created in $clean_backup_path!");
-        $continue = $this->ask("Check that the backup is valid! Continue? Y or N", 'Y');
+        $continue = $this->ask("Confirm that the backup is valid! Continue? (Y/N)", 'Y');
+
+        if(empty(trim(file_get_contents($backup)))){
+            $emptyBak = $this->ask('Backup file created but it is empty, continue? (Y/N)');
+            if(Str::startswith(strtolower($emptyBak),'n')) die();
+        }
         if(Str::startswith(strtolower($continue),'n')) die();
 
         $this->line("... backup complete!'");
@@ -357,6 +370,21 @@ class RunInstallCommand extends Command
             $this->call("module:migrate");
         }
 
+        if ($options['import'] || $options['all']) {
+            $this->line("------------------------------------------------");
+            $this->line('Restoring database from backup!');
+            $this->line('------------------------------------------------');
+
+            $dbBackupDir = storage_path('data/backups');
+            if(!($dbBackupDir = realpath($dbBackupDir))){
+                $this->line('no backups to restore from!');
+            } else {
+                $allBackups = glob($dbBackupDir.'/*/*.sql');
+                $this->line('We found '.(count($allBackups)).' backups!');
+                $this->restoreDatabase(Arr::last($allBackups));
+            }
+        }
+
         if ($options['seed'] || $options['all']) {
             $this->line("------------------------------------------------");
             $this->line('Running database seeds');
@@ -366,8 +394,10 @@ class RunInstallCommand extends Command
                 $this->call('module:seed');
             }
         }
+
         $this->line('');
     }
+
 
     public function runMigrations($migrations, $name = null, $module = false)
     {
@@ -390,6 +420,27 @@ class RunInstallCommand extends Command
         }
         $this->line("");
         $this->disconnect_db($conn);
+    }
+
+    public function restoreDatabase($sqlFile)
+    {
+        $CONNECTION = $this->connect_db('root');
+
+        $this->line("... restoring database data from latest backup: ".basename($sqlFile));
+        $rawSQL =  file_get_contents($sqlFile);
+//        $rawSQL = trim(preg_replace(
+//            "#(--.*)|(((\/\*)+?[\w\W]+?(\*\/\;)+))#msi",
+//            " ",
+//            $rawSQL
+//        ));
+        if(empty($rawSQL)){
+            $this->line('WARNING: There are no instructions in the backup file!');
+        } else {
+
+            $raw = $CONNECTION->unprepared($rawSQL);
+            $this->line(($raw? 'SUCCESS': 'FAILURE') . ' restoring database from backup!');
+        }
+        $this->disconnect_db($CONNECTION);
     }
 
     public function init_server($options = null)
