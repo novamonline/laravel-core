@@ -328,8 +328,8 @@ class RunInstallCommand extends Command
             $emptyBak = $this->ask('Backup file created but it is empty, continue? (Y/N)');
             if(Str::startswith(strtolower($emptyBak),'n')) die();
         }
-        $InsertInto = "INSERT INTO `$database`.`";
-        $SQL = str_replace('REPLACE INTO `', $InsertInto, $rawSQL);
+        $InsertInto = "REPLACE INTO `$database`.`";
+        $SQL = str_replace('INSERT INTO `', $InsertInto, $rawSQL);
         file_put_contents($backup, $SQL);
         if(Str::startswith(strtolower($continue),'n')) die();
 
@@ -381,7 +381,7 @@ class RunInstallCommand extends Command
 
             $dbBackupDir = storage_path('data/backups');
             if(!($dbBackupDir = realpath($dbBackupDir))){
-                $this->line('no backups to restore from!');
+                $this->line('There are no backups to restore from!');
             } else {
                 $allBackups = glob($dbBackupDir.'/*/*.sql');
                 $this->line('We found '.(count($allBackups)).' backups!');
@@ -428,23 +428,27 @@ class RunInstallCommand extends Command
 
     public function restoreDatabase($sqlFile)
     {
-        $CONNECTION = $this->connect_db();
+        try {
+            $CONNECTION = $this->connect_db();
 
-        $this->line("... restoring database data from latest backup: ".basename($sqlFile));
-        $rawSQL =  file_get_contents($sqlFile);
+            $this->line("... restoring database data from latest backup: ".basename($sqlFile));
+            $rawSQL =  file_get_contents($sqlFile);
 //        $rawSQL = trim(preg_replace(
 //            "#(--.*)|(((\/\*)+?[\w\W]+?(\*\/\;)+))#msi",
 //            " ",
 //            $rawSQL
 //        ));
-        if(empty($rawSQL)){
-            $this->line('WARNING: There are no instructions in the backup file!');
-        } else {
+            if(empty($rawSQL)){
+                $this->line('WARNING: There are no instructions in the backup file!');
+            } else {
 
-            $raw = $CONNECTION->unprepared($rawSQL);
-            $this->line(($raw? 'SUCCESS': 'FAILURE') . ' restoring database from backup!');
+                $raw = $CONNECTION->unprepared($rawSQL);
+                $this->line(($raw? 'SUCCESS': 'FAILURE') . ' restoring database from backup!');
+            }
+            $this->disconnect_db($CONNECTION);
+        } catch(\Exception $exc) {
+            $this->line($exc->getMessage());
         }
-        $this->disconnect_db($CONNECTION);
     }
 
     public function init_server($options = null)
