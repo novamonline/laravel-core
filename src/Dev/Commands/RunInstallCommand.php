@@ -395,7 +395,7 @@ class RunInstallCommand extends Command
             $this->line('------------------------------------------------');
             $this->call('db:seed', ['-vv' => true]);
             if (file_exists(base_path('modules'))) {
-                $this->call('module:seed');
+                $this->call('module:seed', ['--force' => true]);
             }
         }
 
@@ -410,7 +410,7 @@ class RunInstallCommand extends Command
         $migrations = "{$migrations}/{$name}";
         $connections =  config('database.connections');
 
-        $props = $mPath = ["--path" => $migrations];
+        $props = $mPath = ["--path" => $migrations, '--force' => true];
         if ($name && in_array("$name", $connections)) {
             $props += $mConn = ["--database" => "$name"];
         }
