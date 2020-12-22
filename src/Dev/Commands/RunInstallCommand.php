@@ -371,7 +371,7 @@ class RunInstallCommand extends Command
             // $this->line("");
         }
         if (file_exists(base_path('modules'))) {
-            $this->call("module:migrate");
+            $this->call("module:migrate", ['--force' => true]);
         }
 
         if ($options['import'] || $options['all']) {
@@ -393,9 +393,9 @@ class RunInstallCommand extends Command
             $this->line("------------------------------------------------");
             $this->line('Running database seeds');
             $this->line('------------------------------------------------');
-            $this->call('db:seed', ['-vv' => true]);
+            $this->call('db:seed', $cmdArgs = ['--force' => true]);
             if (file_exists(base_path('modules'))) {
-                $this->call('module:seed', ['--force' => true]);
+                $this->call('module:seed', $cmdArgs);
             }
         }
 
