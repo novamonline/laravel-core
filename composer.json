@@ -10,7 +10,7 @@
     ],
     "license": "MIT",
     "require": {
-        "oomphinc/composer-installers-extender": "^1.1",
+        "oomphinc/composer-installers-extender": "^2.0",
         "laravel/framework": "^7.0"
     },
     "extra": {
