@@ -324,7 +324,7 @@ class RunInstallCommand extends Command
         $this->line("Backup created in $clean_backup_path!");
         $continue = $this->ask("Confirm that the backup is valid! Continue? (Y/N)", 'Y');
 
-        if(empty($rawSQL = trim(file_get_contents($backup)))){
+        if(!$backup || empty($rawSQL = trim(file_get_contents($backup)))){
             $emptyBak = $this->ask('Backup file created but it is empty, continue? (Y/N)');
             if(Str::startswith(strtolower($emptyBak),'n')) die();
         }
