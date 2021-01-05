@@ -309,7 +309,7 @@ class RunInstallCommand extends Command
         $database = $db['database'];
 
         if(isset($host) && isset($username) && isset($port) && isset($username)){
-            $flags =" --compact --no-create-info --column-statistics=0";
+            $flags =" --compact --no-create-info";
             $mysqldump = "mysqldump -h $host -u $username -P $port $password $flags $database > $backup 2>&1";
             shell_exec( trim($mysqldump) );
         }
@@ -324,7 +324,7 @@ class RunInstallCommand extends Command
         $this->line("Backup created in $clean_backup_path!");
         $continue = $this->ask("Confirm that the backup is valid! Continue? (Y/N)", 'Y');
 
-        if(!$backup || empty($rawSQL = trim(file_get_contents($backup)))){
+        if(!$backup || ($backup && empty($rawSQL = trim(file_get_contents($backup))))) {
             $emptyBak = $this->ask('Backup file created but it is empty, continue? (Y/N)');
             if(Str::startswith(strtolower($emptyBak),'n')) die();
         }
