@@ -285,6 +285,7 @@ class RunInstallCommand extends Command
             $CONNECTION->unprepared("CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
 
             $CONNECTION->unprepared("GRANT $privileges ON $database.* TO '$username'@'$host';");
+            $this->line("... GRANT $privileges ON $database.* TO '$username'@'$host'; ...");
             $CONNECTION->unprepared('FLUSH PRIVILEGES;');
         }
     }
