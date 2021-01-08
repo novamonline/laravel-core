@@ -280,7 +280,8 @@ class RunInstallCommand extends Command
             } else{
                 $database = "*";
             }
-            $this->line("... adding user: username='$username', password='$password'; grant='$privileges' to $database;");
+            //$this->line("... adding user: username='$username', password='$password'; grant='$privileges' to $database;");
+            $this->line("... run: CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
             $CONNECTION->unprepared("CREATE USER IF NOT EXISTS '$username'@'%' IDENTIFIED BY '$password';");
 
             $CONNECTION->unprepared("GRANT $privileges ON $database.* TO '$username'@'$host';");
