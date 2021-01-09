@@ -207,7 +207,7 @@ trait ExtendsDBSchema
     */
    public function timestamps(Blueprint $table, $forceDelete = false, $initUpdate = false) : Blueprint
    {
-      $CURRENT_TIMESTAMP  = DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP');
+      $CURRENT_TIMESTAMP  = DB::raw('CURRENT_TIMESTAMP');
       $NULLABLE_TIMESTAMP = DB::raw('NULL on update CURRENT_TIMESTAMP');
       // $UPDATED_TIMESTAMP  = $initUpdate? $NULLABLE_TIMESTAMP: $CURRENT_TIMESTAMP;
       
