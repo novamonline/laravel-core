@@ -2,6 +2,7 @@
 
 namespace Core\Http\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -197,7 +198,7 @@ class BaseRepository
     }
 
 
-    public function bulkDelete(Request $request, Model $model)
+    public function bulkDelete(Request $request, $model)
     {
 
         try {
@@ -205,7 +206,11 @@ class BaseRepository
                 'id' => 'required'
             ]);
 
-            $model->delete( (array)$request->id );
+            if($model instanceof Builder) {
+                $model->delete();
+            } else {
+                $model->delete( (array)$request->id );
+            }
 
             $this->setResult([
                 'message' =>  __('Successfully deleted record(s)'),
