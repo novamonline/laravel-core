@@ -170,7 +170,7 @@ class BaseRepository
     public function bulkUpdate(Request $request, Collection $Records)
     {
         try {
-            $this->validate($request, [
+            $request->validate([
                 'id' => 'required'
             ]);
 
@@ -202,7 +202,7 @@ class BaseRepository
     {
 
         try {
-            $this->validate($request, [
+            $request->validate([
                 'id' => 'required'
             ]);
 
