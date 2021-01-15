@@ -323,21 +323,25 @@ class RunInstallCommand extends Command
             $this->line('Backup creation was NOT successful!');
             $continue = $this->ask('We will still drop the database. Continue? (Y/N)', 'Y');
             if(Str::of($continue)->lower()->startswith('n')) die();
+            goto finishBackup;
         }
         $clean_backup_path = Str::after($backup, base_path());
         $this->line("");
         $this->line("Backup created in $clean_backup_path!");
         $continue = $this->ask("Confirm that the backup is valid! Continue? (Y/N)", 'Y');
-
-        if(!$backup || ($backup && empty($rawSQL = trim(file_get_contents($backup))))) {
+   
+        $rawSQL = trim(file_get_contents($backup));
+        if(empty($rawSQL)) {
             $emptyBak = $this->ask('Backup file created but it is empty, continue? (Y/N)');
             if(Str::startswith(strtolower($emptyBak),'n')) die();
+            goto finishBackup;
         }
         $InsertInto = "REPLACE INTO `$database`.`";
         $SQL = str_replace('INSERT INTO `', $InsertInto, $rawSQL);
         file_put_contents($backup, $SQL);
         if(Str::startswith(strtolower($continue),'n')) die();
 
+finishBackup:
         $this->line("... backup complete!'");
     }
 
