@@ -34,6 +34,11 @@ trait FiltersResource
     public function getSelected($request, $resource)
     {
         $selected = preg_split("#\s*[,|]\s*#msi", $request->select);
+
+        if(!is_array($resource)){
+            $resource = $resource->toArray();
+        }
+
         return Arr::only($resource, $selected);
     }
 
