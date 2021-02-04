@@ -98,11 +98,13 @@ trait AddsParentChildRelationships
         $depth = 0;
         foreach($this->children ?: [] as $child){
 
-            if (!$child || $depth <= $this->depth) {
-                continue;
+            if (!$child || $depth >= $this->depth) {
+                break;
+            }
+            if($child->children->count()){
+                $child->children = $child->descendants;
             }
             $Descendants->push($child);
-            $Descendants = $Descendants->merge($child->children);
 
             $depth++;
         }
