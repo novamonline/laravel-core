@@ -71,7 +71,7 @@ trait OrphansRecord
         return $this->orphan();
     }
 
-    public function orphan($time = null)
+    public function orphan()
     {
         $time = $this->freshTimestamp();
         return runOrphan($time);
