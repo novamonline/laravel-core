@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Data\Services;
+namespace Core\Data\Models;
 
-use Core\Data\Scopes\OrphanScope;
+use Core\Data\Scopes\OrphaningScope;
 
 /**
  * OrphansData
@@ -24,7 +24,7 @@ trait OrphansRecord
      */
     public static function bootOrphansRecord()
     {
-        static::addGlobalScope(new OrphanScope);
+        static::addGlobalScope(new OrphaningScope);
     }
     /*
      * --------
