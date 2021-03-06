@@ -80,9 +80,10 @@ trait OrphansRecord
             return false;
         }
 
-        $this->runOrphan( $this->freshTimestamp() );
+        if($this->runOrphan( $this->freshTimestamp() )){
+            $this->fireModelEvent('orphaned', false);
+        }
 
-        $this->fireModelEvent('orphaned', false);
     }
 
     /**
@@ -90,23 +91,30 @@ trait OrphansRecord
      *
      * @return void
      */
-    protected function runOrphan($time = null)
+    protected function runOrphan($time = null): bool
     {
-        $query = $this->setKeysForSaveQuery($this->newModelQuery());
+        try {
+            $query = $this->setKeysForSaveQuery($this->newModelQuery());
 
-        $columns = [$this->getOrphanedAtColumn() => $this->fromDateTime($time)];
+            $columns = [$this->getOrphanedAtColumn() => $this->fromDateTime($time)];
 
-        $this->{$this->getOrphanedAtColumn()} = $time;
+            $this->{$this->getOrphanedAtColumn()} = $time;
 
-        if ($this->timestamps && ! is_null($this->getUpdatedAtColumn())) {
-            $this->{$this->getUpdatedAtColumn()} = $time;
+            if ($this->timestamps && ! is_null($this->getUpdatedAtColumn())) {
+                $this->{$this->getUpdatedAtColumn()} = $time;
 
-            $columns[$this->getUpdatedAtColumn()] = $this->fromDateTime($time);
+                $columns[$this->getUpdatedAtColumn()] = $this->fromDateTime($time);
+            }
+
+            $query->update($columns);
+
+            $this->syncOriginalAttributes(array_keys($columns));
+
+            return true;
+
+        } catch(\Exception $exception){
+            return false;
         }
-
-        $query->update($columns);
-
-        $this->syncOriginalAttributes(array_keys($columns));
     }
 
     /**
