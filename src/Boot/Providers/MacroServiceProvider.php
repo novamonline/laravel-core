@@ -6,6 +6,8 @@ namespace Core\Boot\Providers;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class MacroServiceProvider extends ServiceProvider
 {
@@ -39,6 +41,12 @@ class MacroServiceProvider extends ServiceProvider
                     'pageName' => $pageName,
                 ]
             );
+        });
+
+        Builder::macro('getList', function(Model $model = null){
+            return ($limit = request('limit'))
+                ? $this->paginate($limit)
+                : $this->cursor();
         });
     }
 }
