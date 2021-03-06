@@ -2,7 +2,7 @@
 
 namespace Core\Data\Services;
 
-use App\Scopes\OrphanScope;
+use Core\Data\Scopes\OrphanScope;
 
 /**
  * OrphansData
