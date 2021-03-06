@@ -16,7 +16,7 @@ class OrphaningScope implements Scope
      *
      * @var array
      */
-    protected $extensions = ['Orphaned', 'DeOrphaned', 'WithOrphaned', 'WithoutOrphaned', 'OnlyOrphaned'];
+    protected $extensions = ['DeOrphan', 'WithOrphaned', 'WithoutOrphaned', 'OnlyOrphaned'];
 
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -41,32 +41,40 @@ class OrphaningScope implements Scope
         foreach ($this->extensions as $extension) {
             $this->{"add{$extension}"}($builder);
         }
-    }
 
-    /**
-     * Add the orphaned extension to the builder.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
-     * @return void
-     */
-    protected function addOrphaned(Builder $builder)
-    {
-        $builder->macro('orphan', function (Builder $builder) {
-            $builder->withoutOrphaned();
+        $builder->onDelete(function (Builder $builder) {
+            $column = $this->getOrphanedAtColumn($builder);
 
-            return $builder->update([$builder->getModel()->getOrphanedAtColumn() => null]);
+            return $builder->update([
+                $column => $builder->getModel()->freshTimestampString(),
+            ]);
         });
     }
 
     /**
-     * Add the de-orphaned extension to the builder.
+     * Get the "deleted at" column for the builder.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @return string
+     */
+    protected function getOrphanedAtColumn(Builder $builder)
+    {
+        if (count((array) $builder->getQuery()->joins) > 0) {
+            return $builder->getModel()->getQualifiedOrphanedAtColumn();
+        }
+
+        return $builder->getModel()->getOrphanedAtColumn();
+    }
+
+    /**
+     * Add the deOrphan extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void
      */
-    protected function addDeOrphaned(Builder $builder)
+    protected function addDeOrphan(Builder $builder)
     {
-        $builder->macro('deorphan', function (Builder $builder) {
+        $builder->macro('deOrphan', function (Builder $builder) {
             $builder->withOrphaned();
 
             return $builder->update([$builder->getModel()->getOrphanedAtColumn() => null]);
@@ -74,7 +82,7 @@ class OrphaningScope implements Scope
     }
 
     /**
-     * Add the with-orphaned extension to the builder.
+     * Add the with-trashed extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void
@@ -91,7 +99,7 @@ class OrphaningScope implements Scope
     }
 
     /**
-     * Add the without-orphaned extension to the builder.
+     * Add the without-trashed extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void
@@ -110,7 +118,7 @@ class OrphaningScope implements Scope
     }
 
     /**
-     * Add the only-orphaned extension to the builder.
+     * Add the only-trashed extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void
