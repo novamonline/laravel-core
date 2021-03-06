@@ -5,6 +5,8 @@ namespace Core\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 
@@ -55,7 +57,7 @@ class CoreController extends Controller
 
     public function getFiltered($model, $request)
     {
-        $exclude = ['with', 'select', 'page', 'archived', 'limit'];
+        $exclude = ['with', 'select', 'page', 'archived', 'limit', 'orphaned'];
         $filter = $request->except($exclude);
 
         $method = Str::lower($request->method());
@@ -94,6 +96,22 @@ class CoreController extends Controller
     {
         return request('limit') ?? 10;
     }
+
+    /**
+     * Orphan the specified custom field from storage.
+     * @param int $id
+     * @return Response
+     */
+    public function orphan(Request $request, $id)
+    {
+        $Model = $this->model->withTrashed()->withOrphaned();
+        return $this->repo->doOrphan($request, $Model->findOrFail($id));
+    }
+    /**
+     * Restore the orphaned custom field into storage.
+     * @param int $id
+     * @return Response
+     */
 
 
 

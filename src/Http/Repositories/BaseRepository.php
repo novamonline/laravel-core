@@ -25,7 +25,7 @@ class BaseRepository
      */
     public function updateOne(Request $request, Model $Model)
     {
-        $input = $request->all();
+        $input = $request->except('orphaned_at', 'deleted_at');
         foreach($input as $key => $value){
             if(is_array($value)){
                 $arrayData = (array)$Model->$key;
@@ -111,8 +111,30 @@ class BaseRepository
                 $model->delete();
             }
             $this->setResult([
-                'message' =>  __('Successfully deleted record(s)'),
+                'message' =>  __('Successfully archived record(s)'),
                 'data' => $model->toArray(),
+            ]);
+            //
+        } catch(\Exception $ex){
+            $this->setException($ex);
+        }
+        return $this->getResult();
+    }
+
+    /**
+     * @param Request $request
+     * @param $Model
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function restore(Request $request, Model $Model)
+    {
+
+        try {
+            $Model->restore();
+            $this->setResult([
+                'status' => 201,
+                'message' => __('Successfully restored archived record(s)!'),
+                'data' => Arr::except($Model->toArray(), 'fields'),
             ]);
             //
         } catch(\Exception $ex){
@@ -147,18 +169,52 @@ class BaseRepository
 
     /**
      * @param Request $request
-     * @param $Model
-     * @return \Illuminate\Http\JsonResponse
+     * @param Model $model
      */
-    public function restore(Request $request, Model $Model)
+    public function orphan(Request $request, Model $model)
     {
 
         try {
-            $Model->restore();
+
+            if($request->filled('id')){
+                $IDs = (array) $request->id;
+                foreach ($model->find($IDs) as $m){
+                    $m->orphan();
+                }
+            } else {
+                $model->orphan();
+            }
             $this->setResult([
-                'status' => 201,
-                'message' => __('Successfully restored record(s)!'),
-                'data' => Arr::except($Model->toArray(), 'fields'),
+                'message' =>  __('Successfully orphaned record(s)'),
+                'data' => $model->toArray(),
+            ]);
+            //
+        } catch(\Exception $ex){
+            $this->setException($ex);
+        }
+        return $this->getResult();
+    }
+
+    /**
+     * @param Request $request
+     * @param $Model
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deOrphan(Request $request, Model $model)
+    {
+
+        try {
+            if($request->filled('id')){
+                $IDs = (array) $request->id;
+                foreach ($model->find($IDs) as $m){
+                    $m->deOrphan();
+                }
+            } else {
+                $model->deOrphan();
+            }
+            $this->setResult([
+                'message' =>  __('Successfully restored orphaned record(s)'),
+                'data' => $model->toArray(),
             ]);
             //
         } catch(\Exception $ex){
@@ -174,7 +230,7 @@ class BaseRepository
                 'id' => 'required'
             ]);
 
-            $except = ['id', 'archived'];
+            $except = ['id', 'archived', 'orphaned_at'];
 
             if($request->has('archived')){
                 $deleted_at = $request->boolean('archived')? now(): null;
