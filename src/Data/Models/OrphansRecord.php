@@ -68,7 +68,13 @@ trait OrphansRecord
             return $this->setKeysForSaveQuery($this->newModelQuery())->forceRemove();
         }
 
-        return $this->runOrphan();
+        return $this->orphan();
+    }
+
+    public function orphan($time = null)
+    {
+        $time = $this->freshTimestamp();
+        return runOrphan($time);
     }
 
     /**
@@ -76,11 +82,9 @@ trait OrphansRecord
      *
      * @return void
      */
-    protected function runOrphan()
+    protected function runOrphan($time = null)
     {
         $query = $this->setKeysForSaveQuery($this->newModelQuery());
-
-        $time = $this->freshTimestamp();
 
         $columns = [$this->getOrphanedAtColumn() => $this->fromDateTime($time)];
 
