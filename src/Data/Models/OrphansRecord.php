@@ -135,6 +135,11 @@ trait OrphansRecord
         return ! is_null($this->{$this->getOrphanedAtColumn()});
     }
 
+    public function getOrphanedAttribute(): bool
+    {
+        return $this->isOrphaned();
+    }
+
     /**
      * Register a "deOrphaning" model event callback with the dispatcher.
      *
