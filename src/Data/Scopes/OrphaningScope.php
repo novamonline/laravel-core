@@ -82,7 +82,7 @@ class OrphaningScope implements Scope
     }
 
     /**
-     * Add the with-trashed extension to the builder.
+     * Add the with-orphaned extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void
@@ -99,7 +99,7 @@ class OrphaningScope implements Scope
     }
 
     /**
-     * Add the without-trashed extension to the builder.
+     * Add the without-orphaned extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void
@@ -118,7 +118,7 @@ class OrphaningScope implements Scope
     }
 
     /**
-     * Add the only-trashed extension to the builder.
+     * Add the only-orphaned extension to the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return void

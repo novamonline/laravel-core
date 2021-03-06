@@ -38,7 +38,7 @@ trait OrphansRecord
     }
 
     /**
-     * Force a sof delete on an orphaned model.
+     * Force remove on an orphaned model.
      *
      * @return bool|null
      */
@@ -102,11 +102,11 @@ trait OrphansRecord
      *
      * @return bool|null
      */
-    public function deOrphane()
+    public function deOrphan()
     {
         // If the deOrphaning event does not return false, we will proceed with this
-        // deOrphane operation. Otherwise, we bail out so the developer will stop
-        // the deOrphane totally. We will clear the orphaned timestamp and save.
+        // deOrphan operation. Otherwise, we bail out so the developer will stop
+        // the deOrphan totally. We will clear the orphaned timestamp and save.
         if ($this->fireModelEvent('deOrphaning') === false) {
             return false;
         }
@@ -114,7 +114,7 @@ trait OrphansRecord
         $this->{$this->getOrphanedAtColumn()} = null;
 
         // Once we have saved the model, we will fire the "deOrphaned" event so this
-        // developer will do anything they need to after a deOrphane operation is
+        // developer will do anything they need to after a deOrphan operation is
         // totally finished. Then we will return the result of the save call.
         $this->exists = true;
 
