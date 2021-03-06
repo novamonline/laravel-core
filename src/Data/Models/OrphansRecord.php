@@ -73,8 +73,16 @@ trait OrphansRecord
 
     public function orphan()
     {
-        $time = $this->freshTimestamp();
-        return runOrphan($time);
+        // If the orphaning event does not return false, we will proceed with this
+        // orphan operation. Otherwise, we bail out so the developer will stop
+        // the orphan totally. We will clear the orphaned timestamp and save.
+        if ($this->fireModelEvent('orphaning') === false) {
+            return false;
+        }
+
+        $this->runOrphan( $this->freshTimestamp() );
+
+        $this->fireModelEvent('orphaned', false);
     }
 
     /**
@@ -142,6 +150,28 @@ trait OrphansRecord
     public function getOrphanedAttribute(): bool
     {
         return $this->isOrphaned();
+    }
+
+    /**
+     * Register a "deOrphaning" model event callback with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @return void
+     */
+    public static function orphaning($callback)
+    {
+        static::registerModelEvent('orphaning', $callback);
+    }
+
+    /**
+     * Register a "deOrphaning" model event callback with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @return void
+     */
+    public static function orphaned($callback)
+    {
+        static::registerModelEvent('orphaned', $callback);
     }
 
     /**
