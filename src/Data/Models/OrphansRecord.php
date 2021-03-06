@@ -38,7 +38,7 @@ trait OrphansRecord
     }
 
     /**
-     * Force remove on an orphaned model.
+     * Force remove (sof-delete) an orphaned model.
      *
      * @return bool|null
      */
@@ -46,7 +46,7 @@ trait OrphansRecord
     {
         $this->forceRemoving = true;
 
-        return tap($this->orphan(), function ($orphaned) {
+        return tap($this->delete(), function ($orphaned) {
             $this->forceRemoving = false;
 
             if ($orphaned) {
