@@ -28,7 +28,7 @@ class MacroServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Collection::macro('paginate', function($perPage, $total = null, $page = null, $pageName = 'page') {
+        Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {
             $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
 
             return new LengthAwarePaginator(
@@ -43,10 +43,20 @@ class MacroServiceProvider extends ServiceProvider
             );
         });
 
-        Builder::macro('getList', function(Model $model = null){
-            return ($limit = request('limit'))
-                ? $this->paginate($limit)
-                : $this->cursor();
+        Builder::macro('getList', function (Model $model = null) {
+            return $this->returnExpectedResponse($model);
         });
+
+        Builder::macro('toList', function (Model $model = null) {
+            return $this->returnExpectedResponse($model);
+        });
+    }
+
+    public function returnExpectedResponse($model)
+    {
+        $record = $model ?: $this;
+        return ($limit = request('limit'))
+            ? $record->paginate($limit)
+            : $record->cursor();
     }
 }

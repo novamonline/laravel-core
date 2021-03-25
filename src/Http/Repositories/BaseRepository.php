@@ -10,7 +10,7 @@ use Illuminate\Support\Arr;
 
 class BaseRepository
 {
-   use HandlesResponse;
+    use HandlesResponse;
 
     public function __construct()
     {
@@ -23,19 +23,22 @@ class BaseRepository
      * @param Model $Model
      * @return object
      */
-    public function updateOne(Request $request, Model $Model)
+    public function updateOne($input, Model $Model, $save = true)
     {
-        $input = $request->except('orphaned_at', 'deleted_at');
-        foreach($input as $key => $value){
-            if(is_array($value)){
+        foreach ($input as $key => $value) {
+            if (is_array($value)) {
                 $arrayData = (array)$Model->$key;
-                foreach($value as $k => $val){
+                foreach ($value as $k => $val) {
                     $arrayData[$k] = $val;
                 }
                 $input[$key] = $arrayData;
             }
         }
-        $Model->fill($input)->save();
+        $Model->fill($input);
+
+        if ($save) {
+            $Model->save();
+        }
         return $Model;
     }
 
@@ -68,7 +71,7 @@ class BaseRepository
                 'data' => $data,
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -82,14 +85,15 @@ class BaseRepository
     public function update(Request $request, Model $model)
     {
         try {
-            $Model = $this->updateOne($request, $model);
+            $input = $request->except('orphaned_at', 'deleted_at');
+            $Model = $this->updateOne($input, $model);
             $this->setResult([
                 'status' => 201,
                 'message' => __('Successfully updated new records!'),
                 'data' => Arr::except($Model->toArray(), 'fields'),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -101,10 +105,8 @@ class BaseRepository
      */
     public function delete(Request $request, Model $model)
     {
-       
         try {
-
-            if($request->filled('id')){
+            if ($request->filled('id')) {
                 $IDs = (array) $request->id;
                 $model->find($IDs)->delete();
             } else {
@@ -115,7 +117,7 @@ class BaseRepository
                 'data' => $model->toArray(),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -128,7 +130,6 @@ class BaseRepository
      */
     public function restore(Request $request, Model $Model)
     {
-
         try {
             $Model->restore();
             $this->setResult([
@@ -137,7 +138,7 @@ class BaseRepository
                 'data' => Arr::except($Model->toArray(), 'fields'),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -145,12 +146,10 @@ class BaseRepository
 
     public function destroy(Request $request, Model $model)
     {
-
         try {
-
-            if($request->filled('id')){
+            if ($request->filled('id')) {
                 $IDs = (array) $request->id;
-                foreach ($model->find($IDs) as $m){
+                foreach ($model->find($IDs) as $m) {
                     $m->forceDelete();
                 }
             } else {
@@ -161,7 +160,7 @@ class BaseRepository
                 'data' => $model->toArray(),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -173,12 +172,10 @@ class BaseRepository
      */
     public function orphan(Request $request, Model $model)
     {
-
         try {
-
-            if($request->filled('id')){
+            if ($request->filled('id')) {
                 $IDs = (array) $request->id;
-                foreach ($model->find($IDs) as $m){
+                foreach ($model->find($IDs) as $m) {
                     $m->orphan();
                 }
             } else {
@@ -189,7 +186,7 @@ class BaseRepository
                 'data' => $model->toArray(),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -202,11 +199,10 @@ class BaseRepository
      */
     public function deOrphan(Request $request, Model $model)
     {
-
         try {
-            if($request->filled('id')){
+            if ($request->filled('id')) {
                 $IDs = (array) $request->id;
-                foreach ($model->find($IDs) as $m){
+                foreach ($model->find($IDs) as $m) {
                     $m->deOrphan();
                 }
             } else {
@@ -217,7 +213,7 @@ class BaseRepository
                 'data' => $model->toArray(),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
@@ -232,12 +228,12 @@ class BaseRepository
 
             $except = ['id', 'archived', 'orphaned_at'];
 
-            if($request->has('archived')){
+            if ($request->has('archived')) {
                 $deleted_at = $request->boolean('archived')? now(): null;
-                $request->merge( compact('deleted_at') );
+                $request->merge(compact('deleted_at'));
             }
-            foreach ($Records as $record){
-                $record->fill( $request->except($except) )->save();
+            foreach ($Records as $record) {
+                $record->fill($request->except($except))->save();
             }
 
             $this->setResult([
@@ -246,7 +242,7 @@ class BaseRepository
                 'data' => Arr::except($Records->toArray(), ['fields']),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
 
@@ -256,16 +252,15 @@ class BaseRepository
 
     public function bulkDelete(Request $request, $model)
     {
-
         try {
             $request->validate([
                 'id' => 'required'
             ]);
 
-            if($model instanceof Builder) {
+            if ($model instanceof Builder) {
                 $model->delete();
             } else {
-                $model->delete( (array)$request->id );
+                $model->delete((array)$request->id);
             }
 
             $this->setResult([
@@ -273,7 +268,7 @@ class BaseRepository
                 'data' => $model->toArray(),
             ]);
             //
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             $this->setException($ex);
         }
         return $this->getResult();
