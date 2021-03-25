@@ -86,7 +86,8 @@ class RunInstallCommand extends Command
 //        $this->call('cache:clear');
 
         if ($options['doc'] || $options['all']) {
-            $this->call("apidoc:generate");
+            //$this->call("apidoc:generate");
+            //$this->call("scribe:generate");
         }
 
         if ($options['serve']) {
