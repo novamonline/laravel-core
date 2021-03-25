@@ -49,15 +49,14 @@ class MacroServiceProvider extends ServiceProvider
         });
 
         Builder::macro('toList', function (Model $model = null) use ($self) {
-            return $self->returnExpectedResponse($model);
+            return $self->returnExpectedResponse($model ?: $this);
         });
     }
 
     public function returnExpectedResponse($model)
     {
-        $record = $model ?: $this;
         return ($limit = request('limit'))
-            ? $record->paginate($limit)
-            : $record->cursor();
+            ? $model->paginate($limit)
+            : $model->cursor();
     }
 }
