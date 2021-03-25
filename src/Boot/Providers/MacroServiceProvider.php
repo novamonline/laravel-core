@@ -45,7 +45,7 @@ class MacroServiceProvider extends ServiceProvider
 
         $self = $this;
         Builder::macro('getList', function (Model $model = null) use ($self) {
-            return $self->returnExpectedResponse($model);
+            return $self->returnExpectedResponse($model ?: $this);
         });
 
         Builder::macro('toList', function (Model $model = null) use ($self) {
