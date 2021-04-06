@@ -21,7 +21,7 @@ This code can be used by any application that wishes to take advantage of these 
 
 * Finally, just require it using composer
 ```shell script
-> composer requre popcx/core
+> composer requre novam/core-laravel
 ```
 
 That's it!

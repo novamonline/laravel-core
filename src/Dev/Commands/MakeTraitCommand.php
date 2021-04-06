@@ -55,7 +55,7 @@ class MakeTraitCommand extends Command
         $trait = $this->argument('name');
         if($module = $this->argument('module')){
             $path = module_path($Module = Str::studly($module),  '/Services');
-            $namespace = ($this->option('namespace') ?: "Popcx\\$Module\\Services") ."\\";
+            $namespace = ($this->option('namespace') ?: "Modules\\$Module\\Services") ."\\";
         } else{
             $path  = base_path($this->option('path') ?: 'app/Services');
             $namespace = ($this->option('namespace') ?: 'App\\Services') ."\\";

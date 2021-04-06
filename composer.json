@@ -1,5 +1,5 @@
 {
-    "name": "popcx/core",
+    "name": "novam/laravel-core",
     "description": "",
     "authors": [
         {
@@ -11,6 +11,9 @@
     "require": {
         "laravel/framework": "^7.0|^8.0"
     },
+    "suggest": {
+        "nwidart/laravel-modules": "dev-master"
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -21,7 +24,7 @@
                 "Core": "Core\\Mock\\Facades"
             }
         },
-        "installer-name": "core"
+        "installer-name": "laravel-core"
     },
     "autoload": {
         "psr-4": {

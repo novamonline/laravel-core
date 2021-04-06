@@ -1,8 +1,5 @@
 <?php
 
-
-use Popcx\Business\Models\Business;
-
 if(!function_exists('pop')){
    function pop()
    {

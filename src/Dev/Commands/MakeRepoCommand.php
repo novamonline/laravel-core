@@ -71,7 +71,7 @@ class MakeRepoCommand extends Command
 
             $repositoryDir  = pathinfo($repositoryPath, PATHINFO_DIRNAME);
 
-            $namespace = "Popcx\\" . $module->getStudlyName();
+            $namespace = "Modules\\" . $module->getStudlyName();
             $namespace .= Str::after($repositoryDir, $ModuleName);
             $namespace = trim($namespace, '/\\.');
         }

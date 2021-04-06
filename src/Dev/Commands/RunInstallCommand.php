@@ -157,10 +157,10 @@ class RunInstallCommand extends Command
 
 
         if ($options['newdb']) {
-            $database = $this->ask('What is your database name?') ?? 'popcxdb00';
-            $username = $this->ask('What is your database username?') ?? 'popcxusr00';
+            $database = $this->ask('What is your database name?') ?? 'new_db_00';
+            $username = $this->ask('What is your database username?') ?? 'new_db_usr_00';
             $dbport = $this->ask('What is your database port?') ?? '3306';
-            $password = $this->secret('What is your database password?') ?? 'P0pcxU$r00';
+            $password = $this->secret('What is your database password?') ?? 'NewDBU$r00';
             $this->local_db($database, $username, $dbport, $password);
         } else {
             $CONNECTION = $this->connect_db('root');
