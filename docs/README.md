@@ -21,17 +21,27 @@ This code can be used by any application that wishes to take advantage of these 
 
 * Finally, just require it using composer
 ```shell script
-> composer requre novam/core-laravel
+> composer requre novam/laravel-core
 ```
 
 That's it!
 
 ## Core Structure
+Logic is organized into the following folders:
 ### Boot
 Contains logic for pipelines, service providers, observers, etc.
+
+### Conf
+Contains configurations
 
 ### Data
 Contains logic for controllers, databases, migrations, models, etc.
 
+### Dev
+Contains all dev commands and scripts needed in your dev environment
+
 ### Http
 Contains logic for controllers, requests, resources, middlewares, etc.
+
+### Mock
+Entry point for facades and fixtures 
