@@ -1,6 +1,7 @@
 {
     "name": "popcx/core",
-    "description": "",
+    "description": "Delivers helpers and base classes for common laravel functionalities",
+    "type": "laravel-library",
     "authors": [
         {
             "name": "Hilkiah Makemo",
@@ -9,7 +10,7 @@
     ],
     "license": "MIT",
     "require": {
-        "laravel/framework": "^7.0|^8.0"
+        "laravel/framework": ">=7.4"
     },
     "extra": {
         "laravel": {
