@@ -23,7 +23,7 @@
                 "Core": "Core\\Mock\\Facades"
             }
         },
-        "installer-name": "core"
+        "installer-name": "Core"
     },
     "autoload": {
         "psr-4": {
