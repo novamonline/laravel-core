@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class BaseRequest extends FormRequest
 {
+
     public function isMethod($method)
     {
         return Str::lower($method) == Str::lower($this->method());
