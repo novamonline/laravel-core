@@ -1,5 +1,5 @@
 {
-    "name": "popcx/core",
+    "name": "novam/laravel-core",
     "description": "Delivers helpers and base classes for common laravel functionalities",
     "type": "laravel-library",
     "authors": [
