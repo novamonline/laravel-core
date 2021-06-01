@@ -1,0 +1,47 @@
+{
+    "name": "novamonline/laravel-core",
+    "description": "Delivers helpers and base classes for common laravel functionalities",
+    "type": "laravel-library",
+    "authors": [
+        {
+            "name": "Hilkiah Makemo",
+            "email": "hilmak01@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "laravel/framework": ">=7.4",
+        "composer/installers": ">=1.0",
+        "league/flysystem-aws-s3-v3": ">=1.0",
+        "league/flysystem-cached-adapter": ">=1.0"
+    },
+    "require-dev": {
+        "nwidart/laravel-modules": "*"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Core\\Boot\\Providers\\CoreServiceProvider",
+                "Core\\Boot\\Providers\\MacroServiceProvider"
+            ],
+            "aliases": {
+                "Core": "Core\\Mock\\Facades"
+            }
+        },
+        "installer-name": "Core"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "src/",
+            "Core\\Classes\\": "lib/classes/"
+        },
+        "files": [
+            "./lib/helpers/load.php"
+        ],
+        "classmap": [
+            "./lib/classes"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
