@@ -1,7 +1,7 @@
 {
     "name": "novamonline/laravel-core",
     "description": "Delivers helpers and base classes for common laravel functionalities",
-    "type": "laravel-library",
+    "type": "library",
     "authors": [
         {
             "name": "Hilkiah Makemo",
