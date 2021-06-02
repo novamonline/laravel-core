@@ -16,6 +16,9 @@
         "league/flysystem-cached-adapter": ">=1.0",
         "nwidart/laravel-modules": "*"
     },
+    "require-dev": {
+        "knuckleswtf/scribe": "dev-master"
+    },
     "extra": {
         "laravel": {
             "providers": [
