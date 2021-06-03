@@ -97,22 +97,4 @@ class CoreController extends Controller
         return request('limit') ?? 10;
     }
 
-    /**
-     * Orphan the specified custom field from storage.
-     * @param int $id
-     * @return Response
-     */
-    public function orphan(Request $request, $id)
-    {
-        $Model = $this->model->withTrashed()->withOrphaned();
-        return $this->repo->doOrphan($request, $Model->findOrFail($id));
-    }
-    /**
-     * Restore the orphaned custom field into storage.
-     * @param int $id
-     * @return Response
-     */
-
-
-
 }
