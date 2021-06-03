@@ -11,12 +11,11 @@ class PermissionsHandler
 
   public function allow($entity)
   {
-    dump($entity);
     return $this;
 
   }
 
-  public function toDo($action)
+  public function toDo($action = null)
   {
     return true;
   }
