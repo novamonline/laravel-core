@@ -3,6 +3,7 @@
 if(!function_exists('permissions')){
   function permissions()
   {
+    return app(PermissionsHandler::class);
 
   }
 }
